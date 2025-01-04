@@ -22,9 +22,15 @@ public func configure(_ app: Application) async throws {
     )
     // register migrations
     app.migrations.add(CreateUsersTableMigration())
+    app.migrations.add(CreatePubItemsMigration())
+    app.migrations.add(CreateMovementsMigration())
+//    app.migrations.add()
     
     // register controllers
     try app.register(collection: UserController())
+    try app.register(collection: PubItemController())
+    try app.register(collection: MovementController())
+    
     await app.jwt.keys.add(hmac: HMACKey(stringLiteral: Environment.get("DB_SECRET_KEY") ?? ""), digestAlgorithm: .sha256)
     
     // register routes

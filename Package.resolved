@@ -1,5 +1,5 @@
 {
-  "originHash" : "daf61ea85c241c5cf691a3ca3bd2daa013051acb72785739e167257378da4943",
+  "originHash" : "aab304dfad17f4579435df49a7daee4f3143c6deaa546485b52e691886925c8f",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -56,15 +56,6 @@
       }
     },
     {
-      "identity" : "groceryappsharedto",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/anceldev/GroceryAppShareDTO.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "c93bac32bda8779df13e4cb3326a8bce7fce75a7"
-      }
-    },
-    {
       "identity" : "jwt",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/jwt.git",
@@ -107,6 +98,15 @@
       "state" : {
         "revision" : "fd0e415a705c490499f983639b04f491a2ed9d99",
         "version" : "1.23.0"
+      }
+    },
+    {
+      "identity" : "pubproshareddto",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/anceldev/PubProSharedDTO.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "4751e8561cea99670908d06bb6efa6501f286034"
       }
     },
     {

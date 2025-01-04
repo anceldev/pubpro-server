@@ -32,6 +32,9 @@ final class User: Model, Content, Validatable, @unchecked Sendable {
     @Field(key: "points")
     var points: Int? //
     
+    @Children(for: \.$user)
+    var movements: [Movement]
+    
     @OptionalEnum(key: "role")
     var role: UserRole?
     
@@ -40,7 +43,7 @@ final class User: Model, Content, Validatable, @unchecked Sendable {
     
     init(){}
     
-    init(id: UUID? = nil, username: String, email: String, password: String, points: Int = 0, role: UserRole? = .user, createdAt: Date?) {
+    init(id: UUID? = nil, username: String, email: String, password: String, points: Int = 0, role: UserRole? = .user, createdAt: Date?, userId: UUID) {
         self.id = id
         self.username = username
         self.email = email

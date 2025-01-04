@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 import Fluent
+import PubProSharedDTO
 
 class UserController: RouteCollection, @unchecked Sendable {
     func boot(routes: any RoutesBuilder) throws {
@@ -21,8 +22,6 @@ class UserController: RouteCollection, @unchecked Sendable {
             try await signIn(req: req)
         }
     }
-    
-    
     
     /// Sign In a auser
     /// - Parameter req: request
