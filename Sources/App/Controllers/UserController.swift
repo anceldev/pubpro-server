@@ -21,6 +21,37 @@ class UserController: RouteCollection, @unchecked Sendable {
         api.post("sign-in") { [self] req async throws -> SignInResponseDTO in
             try await signIn(req: req)
         }
+        
+        let protected = api.grouped(JWTAuthenticator())
+        protected.get("token-sign-in", ":userId") { [self] req async throws -> SignInResponseDTO in
+            try await signInWithToken(req: req)
+        }
+    }
+    
+    func signInWithToken(req: Request) async throws -> SignInResponseDTO {
+        guard let userId = req.parameters.get("userId", as: UUID.self) else {
+            throw Abort(.unauthorized)
+        }
+
+        guard let existingUser = try await User.find(userId, on: req.db) else {
+            throw Abort(.notFound)
+        }
+
+        let authPayload = try AuthPayload(
+            subject: "vapor",
+            expiration: .init(value: .distantFuture),
+            userId: existingUser.requireID()
+        )
+        
+        guard let userResponseDTO = UserResponseDTO(existingUser) else {
+            throw Abort(.notFound)
+        }
+        let response = try await SignInResponseDTO(
+            error: false,
+            token: req.jwt.sign(authPayload),
+            user: userResponseDTO
+        )
+        return response
     }
     
     /// Sign In a auser
@@ -47,16 +78,18 @@ class UserController: RouteCollection, @unchecked Sendable {
             expiration: .init(value: .distantFuture),
             userId: existingUser.requireID()
         )
+        guard let userResponseDTO = UserResponseDTO(existingUser) else {
+            throw Abort(.notFound)
+        }
         
         let response = try await SignInResponseDTO(
             error: false,
             token: req.jwt.sign(authPayload),
-            userId: existingUser.requireID()
+            user: userResponseDTO
         )
         
         return response
     }
-    
     
     /// Sign ups a new user
     /// - Parameter req: request

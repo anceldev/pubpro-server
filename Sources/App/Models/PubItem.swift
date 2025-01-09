@@ -8,11 +8,12 @@
 import Foundation
 import Fluent
 import Vapor
+import PubProSharedDTO
 
-enum ItemType: String, Codable {
-    case consumption
-    case reward
-}
+//enum ItemType: String, Codable {
+//    case consumption
+//    case reward
+//}
 
 final class PubItem: Model, Content, @unchecked Sendable {
     static let schema = "pub_items"

@@ -7,22 +7,23 @@
 
 import Foundation
 import Vapor
+import PubProSharedDTO
 
-struct MovementResponseDTO: Codable, Content, @unchecked Sendable {
-    let id: UUID
-    let userId: UserResponseDTO
-    let pubItem: PubItemResponseDTO
-    let addedOn: Date
-    
-    init(id: UUID, user: UserResponseDTO, pubItem: PubItemResponseDTO, addedOn: Date) {
-        self.id = id
-        self.userId = user
-        self.pubItem = pubItem
-        self.addedOn = addedOn
-    }
-}
+//struct MovementResponseDTO: Codable, Content, @unchecked Sendable {
+//    let id: UUID
+//    let userId: UserResponseDTO
+//    let pubItem: PubItemResponseDTO
+//    let addedOn: Date
+//    
+//    init(id: UUID, user: UserResponseDTO, pubItem: PubItemResponseDTO, addedOn: Date) {
+//        self.id = id
+//        self.userId = user
+//        self.pubItem = pubItem
+//        self.addedOn = addedOn
+//    }
+//}
 
-extension MovementResponseDTO {
+extension MovementResponseDTO: Content {
     
     init?(_ movement: Movement) {
         guard let movementId = movement.id,

@@ -8,10 +8,14 @@
 import Foundation
 import Fluent
 import Vapor
+import PubProSharedDTO
+//enum UserRole: String, Codable {
+//    case admin
+//    case user
+//}
 
-enum UserRole: String, Codable {
-    case admin
-    case user
+extension UserRole: @unchecked Sendable {
+    
 }
 
 final class User: Model, Content, Validatable, @unchecked Sendable {

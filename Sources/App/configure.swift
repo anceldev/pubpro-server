@@ -13,7 +13,7 @@ public func configure(_ app: Application) async throws {
             configuration: .init(
                 hostname: Environment.get("DB_HOST_NAME") ?? "",
                 username: Environment.get("DB_USER_NAME") ?? "",
-                password: "",
+                password: Environment.get("DB_USER_PASSWORD") ?? "",
                 database: Environment.get("DB_NAME") ?? "",
                 tls: .prefer(try .init(configuration: .clientDefault))
             )
@@ -32,6 +32,8 @@ public func configure(_ app: Application) async throws {
     try app.register(collection: MovementController())
     
     await app.jwt.keys.add(hmac: HMACKey(stringLiteral: Environment.get("DB_SECRET_KEY") ?? ""), digestAlgorithm: .sha256)
+    
+    try await app.autoMigrate().get()
     
     // register routes
     try routes(app)

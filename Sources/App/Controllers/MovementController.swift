@@ -8,11 +8,11 @@
 import Foundation
 import Vapor
 import Fluent
+import PubProSharedDTO
 
 final class MovementController: RouteCollection, @unchecked Sendable {
     func boot(routes: any RoutesBuilder) throws {
         let api = routes.grouped("api", "users", ":userId").grouped(JWTAuthenticator())
-//        let api = routes.grouped("api", "users", ":userId")
         
         api.get("movements") { [self] req async throws -> [MovementResponseDTO] in
             try await getMovementsByUser(req: req)
@@ -32,21 +32,18 @@ final class MovementController: RouteCollection, @unchecked Sendable {
             .with(\.$user)
             .with(\.$pubItem)
             .all()
-//        for mov in movements {
-//            try await mov.$user.load(on: req.db)
-//            try await mov.$pubItem.load(on: req.db)
-//        }
         return movements.compactMap(MovementResponseDTO.init)
     }
     
     func saveMovement(req: Request) async throws -> MovementResponseDTO {
-        guard let userId = req.parameters.get("userId", as: UUID.self)
-        else {
+        guard let userId = req.parameters.get("userId", as: UUID.self) else {
             throw Abort(.badRequest)
         }
-        
-        guard let user = try await User.find(userId, on: req.db) else {
+        guard let existingUser = try await User.find(userId, on: req.db) else {
             throw Abort(.notFound)
+        }
+        guard let userRole = existingUser.role, userRole == .admin else {
+            throw Abort(.unauthorized)
         }
         
         let movementRequestDTO = try req.content.decode(MovementRequestDTO.self)
@@ -68,25 +65,17 @@ final class MovementController: RouteCollection, @unchecked Sendable {
         try await movement.save(on: req.db)
         try await movement.$pubItem.load(on: req.db)
         
-        let currentPoints = user.points ?? 0
+        let currentPoints = existingUser.points ?? 0
         let totalPoints = movement.pubItem.itemType == .consumption ? currentPoints + pubItem.points : currentPoints - pubItem.points
         
-        user.points = totalPoints
-        try await user.save(on: req.db)
+        existingUser.points = totalPoints
+        try await existingUser.save(on: req.db)
         
         try await movement.$user.load(on: req.db)
-        
         
         guard let movementResponseDTO = MovementResponseDTO(movement) else {
             throw Abort(.internalServerError)
         }
-        
-//        let currentPoints = user.points ?? 0
-//        let totalPoints = movement.pubItem.itemType == .consumption ? currentPoints + pubItem.points : currentPoints - pubItem.points
-//        
-//        user.points = totalPoints
-//        try await user.save(on: req.db)
-        
         return movementResponseDTO
     }
 }

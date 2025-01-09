@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 import Fluent
+import PubProSharedDTO
 
 final class PubItemController: RouteCollection, @unchecked Sendable {
     func boot(routes: any RoutesBuilder) throws {
